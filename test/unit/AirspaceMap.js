@@ -540,6 +540,7 @@ describe('AirspaceMap#getMapboxgl', () => {
         sinon.stub(console, 'warn')
         actual.mapboxgl
         expect(console.warn.calledOnce).to.be.true
+        console.warn.restore()
     })
 
 })
