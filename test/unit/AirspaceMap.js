@@ -123,6 +123,22 @@ describe('AirspaceMap#addLayer', () => {
         mapboxglMock.Map.prototype.setLayoutProperty.restore()
     })
 
+    it('should call mapboxgl.Map.addLayer if an object is passed', () => {
+        const spy = sinon.spy(mapboxglMock.Map.prototype, 'addLayer')
+        const expected = {
+            id: 'foo',
+            type: 'fill',
+            source: 'foo-source',
+            paint: {
+                'fill-color': '#ff0000'
+            }
+        }
+        map.addLayer(expected)
+        expect(spy).to.have.been.calledOnce
+        expect(spy).to.have.been.calledWith(expected)
+        spy.restore()
+    })
+
     it('should set normal layers to visible', () => {
         map.addLayer('schools')
         expect(setLayoutProperty).to.have.been.calledWith('schools', 'visibility', 'visible')

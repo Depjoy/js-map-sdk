@@ -389,10 +389,16 @@ class AirspaceMap {
     /**
      * Show an airspace layer if it is not currently visible.
      * @public
-     * @param {string} layer - Name of the layer to add.
+     * @param {string|object} layer - Name of the airspace layer to add. If an
+     * object is passed, this will be handed off to {@link https://www.mapbox.com/mapbox-gl-js/api/#addLayer|mapboxgl.Map.addLayer}.
      * @returns {AirspaceMap} - `this`
      */
     addLayer(layer) {
+        // if an object is passed, hand it off to mapbox.Map.addLayer()
+        if (typeof layer === 'object') {
+            this.map.addLayer(layer)
+            return this
+        }
         if (!utils.isValidLayer(layer)) return false
         if (this.getLayers().indexOf(layer) > -1) return false
         if (layer === 'tfrs') {
