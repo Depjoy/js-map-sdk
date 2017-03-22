@@ -158,6 +158,12 @@ describe('AirspaceMap#addLayer', () => {
         expect(map.getLayers()).to.deep.equal(['heliports'])
     })
 
+    it('should ignore layers that have already been added', () => {
+        map.addLayer('heliports')
+        map.addLayer('heliports')
+        expect(map.getLayers()).to.deep.equal(['heliports'])
+    })
+
 })
 
 describe('AirspaceMap#removeLayer', () => {

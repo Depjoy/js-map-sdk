@@ -394,6 +394,7 @@ class AirspaceMap {
      */
     addLayer(layer) {
         if (!utils.isValidLayer(layer)) return false
+        if (this.getLayers().indexOf(layer) > -1) return false
         if (layer === 'tfrs') {
             this.map.setLayoutProperty('active-tfrs', 'visibility', 'visible')
             this.map.setLayoutProperty('future-tfrs', 'visibility', 'visible')
