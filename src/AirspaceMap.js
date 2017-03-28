@@ -38,8 +38,9 @@ class AirspaceMap {
      * @param {boolean} [opts.showControls=true] - Show controls for zoom and bearing.
      * @param {boolean} [opts.showPopups=true] - Show a popup with airspace information when a user clicks on the map.
      * @param {boolean} [opts.showSearch=false] - Render a search bar that allows users to query for a specific location.
-     * @param {boolean} [opts.useLocation=true] - Attempt to center the map on a user's location if their browser allows geolocation.
-     * @param {boolean} [opts.createFlights=false] - Insert an 'add flight here' button in popups that allows users to create a flight using DNAS Basic Integration.
+     * @param {boolean} [opts.useLocation=true] - Attempt to center the map on a user location.
+     * @param {boolean} [opts.createFlights=false] - Insert button in popups that allows users to create a flight using DNAS Basic Integration.
+     * @param {boolean} [opts.suppressWarnings=false] - Suppress developer warnings.
      */
     constructor(config = {}, opts) {
         if (!this._supported()) {
@@ -388,11 +389,18 @@ class AirspaceMap {
     /**
      * Show an airspace layer if it is not currently visible.
      * @public
-     * @param {string} layer - Name of the layer to add.
+     * @param {string|object} layer - Name of the airspace layer to add. If an
+     * object is passed, this will be handed off to {@link https://www.mapbox.com/mapbox-gl-js/api/#addLayer|mapboxgl.Map.addLayer}.
      * @returns {AirspaceMap} - `this`
      */
     addLayer(layer) {
+        // if an object is passed, hand it off to mapbox.Map.addLayer()
+        if (typeof layer === 'object') {
+            this.map.addLayer(layer)
+            return this
+        }
         if (!utils.isValidLayer(layer)) return false
+        if (this.getLayers().indexOf(layer) > -1) return false
         if (layer === 'tfrs') {
             this.map.setLayoutProperty('active-tfrs', 'visibility', 'visible')
             this.map.setLayoutProperty('future-tfrs', 'visibility', 'visible')
@@ -588,6 +596,18 @@ class AirspaceMap {
     }
 
     /**
+     * Wraps Mapbox GL's Map.removeControl.
+     * {@link https://www.mapbox.com/mapbox-gl-js/api/#Map#removeControl|[docs]}
+     * @public
+     * @param {Object} control - The {@link https://www.mapbox.com/mapbox-gl-js/api/#Control|Control} to remove.
+     * @returns {AirspaceMap} - `this`
+     */
+     removeControl(control) {
+        this.map.removeControl(control)
+        return this
+     }
+
+    /**
      * Returns the theme that is currently active.
      * @public
      * @returns {string} theme - Theme that is currently displayed on the map.
@@ -620,6 +640,16 @@ class AirspaceMap {
             }
         })
     }
+
+    /**
+     * Wraps Mapbox GL's Map.getContainer.
+     * {@link https://www.mapbox.com/mapbox-gl-js/api/#Map#getContainer|[docs]}
+     * @public
+     * @returns {HTMLElement} - The map's container.
+     */
+     getContainer() {
+        return this.map.getContainer()
+     }
 
     /**
      * Drops a marker at the provided location.
@@ -685,7 +715,7 @@ class AirspaceMap {
      * @public
      */
     get mapboxgl() {
-        if (window.console && window.console.warn) {
+        if (window.console && window.console.warn && !this.opts.suppressWarnings) {
             console.warn('AirMap: Methods you call using the mapboxgl getter are subject to change based on minor ' +
                          'version updates in Mapbox GL JS. If you need to use this feature, it is recommended that ' +
                          'you lock your SDK to a specific version.')
@@ -745,7 +775,8 @@ AirspaceMap.defaults = {
     useLocation: false,
     createFlights: false,
     tileServiceUrl: 'https://api.airmap.com/maps/v4/tilejson',
-    webAppUrl: 'https://app.airmap.io'
+    webAppUrl: 'https://app.airmap.io',
+    suppressWarnings: false
 }
 
 

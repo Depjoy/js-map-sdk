@@ -15,7 +15,9 @@ before(() => {
     mapboxglMock.Map.prototype.fitBounds = () => null
     mapboxglMock.Map.prototype.flyTo = () => null
     mapboxglMock.Map.prototype.getCenter = () => null
+    mapboxglMock.Map.prototype.mapboxgl = () => null
     mapboxglMock.Map.prototype.remove = () => null
+    mapboxglMock.Map.prototype.removeControl = () => null
     mapboxglMock.Map.prototype.resize = () => null
     mapboxglMock.Map.prototype.setLayoutProperty = () => null
     mapboxglMock.Map.prototype.zoomTo = () => null
@@ -112,13 +114,29 @@ describe('AirspaceMap#addLayer', () => {
     let map, setLayoutProperty
 
     beforeEach(() => {
-        map = new AirspaceMap(configMock)
-        setLayoutProperty = sinon.stub(mapboxglMock.Map.prototype, 'setLayoutProperty', () => null)
+        map = new AirspaceMap(configMock, { layers: [] })
+        setLayoutProperty = sinon.spy(mapboxglMock.Map.prototype, 'setLayoutProperty')
     })
 
     afterEach(() => {
         map = null
-        setLayoutProperty.restore()
+        mapboxglMock.Map.prototype.setLayoutProperty.restore()
+    })
+
+    it('should call mapboxgl.Map.addLayer if an object is passed', () => {
+        const spy = sinon.spy(mapboxglMock.Map.prototype, 'addLayer')
+        const expected = {
+            id: 'foo',
+            type: 'fill',
+            source: 'foo-source',
+            paint: {
+                'fill-color': '#ff0000'
+            }
+        }
+        map.addLayer(expected)
+        expect(spy).to.have.been.calledOnce
+        expect(spy).to.have.been.calledWith(expected)
+        spy.restore()
     })
 
     it('should set normal layers to visible', () => {
@@ -128,40 +146,38 @@ describe('AirspaceMap#addLayer', () => {
     })
 
     it('should append new layers when called more than once', () => {
-        (() => {
-            map.addLayer('schools')
-            map.addLayer('class_c')
-            expect(setLayoutProperty).to.have.been.calledWith('schools', 'visibility', 'visible')
-            expect(setLayoutProperty).to.have.been.calledWith('class_c', 'visibility', 'visible')
-            expect(map.getLayers()).to.deep.equal(['schools', 'class_c'])
-        })
+        map.addLayer('schools')
+        map.addLayer('class_c')
+        expect(setLayoutProperty).to.have.been.calledWith('schools', 'visibility', 'visible')
+        expect(setLayoutProperty).to.have.been.calledWith('class_c', 'visibility', 'visible')
+        expect(map.getLayers()).to.deep.equal(['schools', 'class_c'])
     })
 
     it('should set TFR layers to visible', () => {
-        (() => {
-            map.addLayer('tfrs')
-            expect(setLayoutProperty).to.have.been.calledWith('active-tfrs', 'visibility', 'visible')
-            expect(setLayoutProperty).to.have.been.calledWith('future-tfrs', 'visibility', 'visible')
-            expect(map.getLayers()).to.deep.equal(['tfrs'])
-        })
+        map.addLayer('tfrs')
+        expect(setLayoutProperty).to.have.been.calledWith('active-tfrs', 'visibility', 'visible')
+        expect(setLayoutProperty).to.have.been.calledWith('future-tfrs', 'visibility', 'visible')
+        expect(map.getLayers()).to.deep.equal(['tfrs'])
     })
 
     it('should set DNAS layers to visible', () => {
-        (() => {
-            map.addLayer('airports_recreational')
-            expect(setLayoutProperty).to.have.been.calledWith('airports_recreational', 'visibility', 'visible')
-            expect(setLayoutProperty).to.have.been.calledWith('airports_recreational_dnas', 'visibility', 'visible')
-            expect(map.getLayers()).to.deep.equal(['airports_recreational'])
-        })
+        map.addLayer('airports_recreational')
+        expect(setLayoutProperty).to.have.been.calledWith('airports_recreational', 'visibility', 'visible')
+        expect(setLayoutProperty).to.have.been.calledWith('airports_recreational_dnas', 'visibility', 'visible')
+        expect(map.getLayers()).to.deep.equal(['airports_recreational'])
     })
 
     it('should set layers with markers to visible', () => {
-        (() => {
-            map.addLayer('heliports')
-            expect(setLayoutProperty).to.have.been.calledWith('heliports', 'visibility', 'visible')
-            expect(setLayoutProperty).to.have.been.calledWith('heliports-marker', 'visibility', 'visible')
-            expect(map.getLayers()).to.deep.equal(['heliports'])
-        })
+        map.addLayer('heliports')
+        expect(setLayoutProperty).to.have.been.calledWith('heliports', 'visibility', 'visible')
+        expect(setLayoutProperty).to.have.been.calledWith('heliports-marker', 'visibility', 'visible')
+        expect(map.getLayers()).to.deep.equal(['heliports'])
+    })
+
+    it('should ignore layers that have already been added', () => {
+        map.addLayer('heliports')
+        map.addLayer('heliports')
+        expect(map.getLayers()).to.deep.equal(['heliports'])
     })
 
 })
@@ -172,12 +188,12 @@ describe('AirspaceMap#removeLayer', () => {
 
     beforeEach(() => {
         map = new AirspaceMap(configMock, { layers: ['tfrs', 'noaa', 'airports_recreational', 'schools'] })
-        setLayoutProperty = sinon.stub(mapboxglMock.Map.prototype, 'setLayoutProperty', () => null)
+        setLayoutProperty = sinon.spy(mapboxglMock.Map.prototype, 'setLayoutProperty')
     })
 
     afterEach(() => {
         map = null
-        setLayoutProperty.restore()
+        mapboxglMock.Map.prototype.setLayoutProperty.restore()
     })
 
     it('should set normal layers to hidden', () => {
@@ -187,41 +203,32 @@ describe('AirspaceMap#removeLayer', () => {
     })
 
     it('should remove layers when called more than once', () => {
-        (() => {
-            map.removeLayer('schools')
-            map.removeLayer('noaa')
-            expect(setLayoutProperty).to.have.been.calledWith('schools', 'visibility', 'none')
-            expect(setLayoutProperty).to.have.been.calledWith('noaa', 'visibility', 'none')
-            expect(map.getLayers()).to.deep.equal(['tfrs', 'airports_recreational'])
-        })
+        map.removeLayer('schools')
+        map.removeLayer('noaa')
+        expect(setLayoutProperty).to.have.been.calledWith('schools', 'visibility', 'none')
+        expect(setLayoutProperty).to.have.been.calledWith('noaa', 'visibility', 'none')
+        expect(map.getLayers()).to.deep.equal(['tfrs', 'airports_recreational'])
     })
 
     it('should set TFR layers to hidden', () => {
-        (() => {
-            map.removeLayer('tfrs')
-            expect(setLayoutProperty).to.have.been.calledWith('active-tfrs', 'visibility', 'none')
-            expect(setLayoutProperty).to.have.been.calledWith('future-tfrs', 'visibility', 'none')
-            expect(map.getLayers()).to.deep.equal(['noaa', 'airports_recreational', 'schools'])
-        })
+        map.removeLayer('tfrs')
+        expect(setLayoutProperty).to.have.been.calledWith('active-tfrs', 'visibility', 'none')
+        expect(setLayoutProperty).to.have.been.calledWith('future-tfrs', 'visibility', 'none')
+        expect(map.getLayers()).to.deep.equal(['noaa', 'airports_recreational', 'schools'])
     })
 
     it('should set DNAS layers to hidden', () => {
-        (() => {
-            map.removeLayer('airports_recreational')
-            expect(setLayoutProperty).to.have.been.calledWith('airports_recreational', 'visibility', 'none')
-            expect(setLayoutProperty).to.have.been.calledWith('airports_recreational_dnas', 'visibility', 'none')
-            expect(map.getLayers()).to.deep.equal(['tfrs', 'noaa', 'schools'])
-        })
+        map.removeLayer('airports_recreational')
+        expect(setLayoutProperty).to.have.been.calledWith('airports_recreational', 'visibility', 'none')
+        expect(setLayoutProperty).to.have.been.calledWith('airports_recreational_dnas', 'visibility', 'none')
+        expect(map.getLayers()).to.deep.equal(['tfrs', 'noaa', 'schools'])
     })
 
     it('should set layers with markers to hidden', () => {
-        (() => map.addLayer('heliports'))
-        (() => {
-            map.removeLayer('heliports')
-            expect(setLayoutProperty).to.have.been.calledWith('heliports', 'visibility', 'none')
-            expect(setLayoutProperty).to.have.been.calledWith('heliports-marker', 'visibility', 'none')
-            expect(map.getLayers()).to.deep.equal(['tfrs', 'noaa', 'airports_recreational', 'schools'])
-        })
+        map.removeLayer('heliports')
+        expect(setLayoutProperty).to.have.been.calledWith('heliports', 'visibility', 'none')
+        expect(setLayoutProperty).to.have.been.calledWith('heliports-marker', 'visibility', 'none')
+        expect(map.getLayers()).to.deep.equal(['tfrs', 'noaa', 'airports_recreational', 'schools'])
     })
 
 })
@@ -424,6 +431,18 @@ describe('AirspaceMap#addControl', () => {
 
 })
 
+describe('AirspaceMap#removeControl', () => {
+
+    it('should call mapboxgl.Map.removeControl', () => {
+        const stub = sinon.stub(mapboxglMock.Map.prototype, 'removeControl', () => null)
+        const actual = new AirspaceMap(configMock)
+        actual.removeControl({})
+        expect(stub).to.have.been.calledWith({})
+        stub.restore()
+    })
+
+})
+
 describe('AirspaceMap#getTheme', () => {
 
     it('should return the current theme', () => {
@@ -466,6 +485,18 @@ describe('AirspaceMap#theme', () => {
 
 })
 
+describe('AirspaceMap#getContainer', () => {
+
+    it('should return the map container HTML element', () => {
+        const stub = sinon.stub(mapboxglMock.Map.prototype, 'getContainer')
+        const actual = new AirspaceMap(configMock)
+        actual.getContainer()
+        expect(stub).to.have.been.calledOnce
+        stub.restore()
+    })
+
+})
+
 describe('AirspaceMap#addMarker', () => {
 
     it('should call _renderMarkers', () => {
@@ -503,6 +534,18 @@ describe('AirspaceMap#remove', () => {
         actual.remove()
         expect(spy).to.have.been.calledOnce
         spy.restore()
+    })
+
+})
+
+describe('AirspaceMap#getMapboxgl', () => {
+
+    it('should log a warning if suppressWarning is false', () => {
+        const actual = new AirspaceMap(configMock)
+        sinon.stub(console, 'warn')
+        actual.mapboxgl
+        expect(console.warn.calledOnce).to.be.true
+        console.warn.restore()
     })
 
 })
