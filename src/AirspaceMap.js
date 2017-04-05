@@ -587,11 +587,12 @@ class AirspaceMap {
      * Wraps Mapbox GL's Map.addControl.
      * {@link https://www.mapbox.com/mapbox-gl-js/api/#Map#addControl|[docs]}
      * @public
-     * @param {Object} control - The {@link https://www.mapbox.com/mapbox-gl-js/api/#Control|Control} to add.
+     * @param {Object} control - The {@link https://www.mapbox.com/mapbox-gl-js/api/#icontrol|Control} to add.
+     * @param {string} [position] - {@link https://www.mapbox.com/mapbox-gl-js/api/#Map#addControl|Position} on the map where the control will be added.
      * @returns {AirspaceMap} - `this`
      */
-    addControl(control) {
-        this.map.addControl(control)
+    addControl(control, position = undefined) {
+        this.map.addControl(control, position)
         return this
     }
 
