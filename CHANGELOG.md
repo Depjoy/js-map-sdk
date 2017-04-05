@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.1"></a>
+# [2.1.1](https://github.com/airmap/js-map-sdk/compare/v2.1.0...v2.1.1) (2017-04-05)
+
+
+### Bug Fixes
+
+* Add position parameter to addControl method. ([091d1da](https://github.com/airmap/js-map-sdk/commit/091d1da))
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/airmap/js-map-sdk/compare/v2.0.0...v2.1.0) (2017-03-28)
 
