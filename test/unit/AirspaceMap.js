@@ -421,11 +421,19 @@ describe('AirspaceMap#addSource', () => {
 
 describe('AirspaceMap#addControl', () => {
 
-    it('should call mapboxgl.Map.addControl', () => {
+    it('should call mapboxgl.Map.addControl with no position indicated', () => {
         const stub = sinon.stub(mapboxglMock.Map.prototype, 'addControl', () => null)
         const actual = new AirspaceMap(configMock)
         actual.addControl({})
-        expect(stub).to.have.been.calledWith({})
+        expect(stub).to.have.been.calledWith({}, undefined)
+        stub.restore()
+    })
+
+    it('should call mapboxgl.Map.addControl with position indicated', () => {
+        const stub = sinon.stub(mapboxglMock.Map.prototype, 'addControl', () => null)
+        const actual = new AirspaceMap(configMock)
+        actual.addControl({}, 'top-left')
+        expect(stub).to.have.been.calledWith({}, 'top-left')
         stub.restore()
     })
 

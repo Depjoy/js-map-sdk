@@ -24,7 +24,7 @@ Class that wraps Mapbox GL and allows for working with airspace layers.
     * [.getZoom()](#AirspaceMap+getZoom) ⇒ <code>number</code>
     * [.getSource(id)](#AirspaceMap+getSource) ⇒ <code>Object</code>
     * [.addSource(id, source)](#AirspaceMap+addSource)
-    * [.addControl(control)](#AirspaceMap+addControl) ⇒ <code>[AirspaceMap](#AirspaceMap)</code>
+    * [.addControl(control, [position])](#AirspaceMap+addControl) ⇒ <code>[AirspaceMap](#AirspaceMap)</code>
     * [.removeControl(control)](#AirspaceMap+removeControl) ⇒ <code>[AirspaceMap](#AirspaceMap)</code>
     * [.getTheme()](#AirspaceMap+getTheme) ⇒ <code>string</code>
     * [.theme(theme)](#AirspaceMap+theme)
@@ -272,7 +272,7 @@ Wraps Mapbox GL's Map.addSource.
 
 <a name="AirspaceMap+addControl"></a>
 
-### airspaceMap.addControl(control) ⇒ <code>[AirspaceMap](#AirspaceMap)</code>
+### airspaceMap.addControl(control, [position]) ⇒ <code>[AirspaceMap](#AirspaceMap)</code>
 Wraps Mapbox GL's Map.addControl.
 [[docs]](https://www.mapbox.com/mapbox-gl-js/api/#Map#addControl)
 
@@ -282,7 +282,8 @@ Wraps Mapbox GL's Map.addControl.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| control | <code>Object</code> | The [Control](https://www.mapbox.com/mapbox-gl-js/api/#Control) to add. |
+| control | <code>Object</code> | The [Control](https://www.mapbox.com/mapbox-gl-js/api/#icontrol) to add. |
+| [position] | <code>string</code> | [Position](https://www.mapbox.com/mapbox-gl-js/api/#Map#addControl) on the map where the control will be added. |
 
 <a name="AirspaceMap+removeControl"></a>
 
