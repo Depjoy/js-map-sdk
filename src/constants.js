@@ -1,4 +1,4 @@
-exports.mapboxStyles = 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.css'
+exports.mapboxStyles = 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.0/mapbox-gl.css'
 exports.mapboxGeocoder = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.0.1/mapbox-gl-geocoder.js'
 exports.mapboxGeocoderStyles = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.0.1/mapbox-gl-geocoder.css'
 exports.poweredByLogo = 'https://cdn.airmap.io/img/airmap-powered-logo.png'
