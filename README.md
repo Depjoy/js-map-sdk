@@ -23,10 +23,10 @@ You'll also need to register for a [Mapbox Access Token](https://www.mapbox.com/
 
 ```html
 <!-- Latest patch release -->
-<script src="https://cdn.airmap.io/js/maps/2.0.0/airmap.map.min.js"></script>
+<script src="https://cdn.airmap.io/js/maps/2.2.0/airmap.map.min.js"></script>
 
 <!-- Latest minor release -->
-<script src="https://cdn.airmap.io/js/maps/v2.0/airmap.map.min.js"></script>
+<script src="https://cdn.airmap.io/js/maps/v2.2/airmap.map.min.js"></script>
 ```
 
 ### From [bower](http://bower.io)
@@ -55,7 +55,7 @@ Here's an example of a minimal setup. See [Documentation](#documentation) for mo
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <script src="https://cdn.airmap.io/js/maps/v2.0/airmap.map.min.js"></script>
+        <script src="https://cdn.airmap.io/js/maps/v2.2/airmap.map.min.js"></script>
         <style>
             body {
                 margin: 0;
