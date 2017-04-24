@@ -41,7 +41,7 @@ exports.staticLayers = [
     'tfrs',
     'universities',
     'wildfires'
-];
+]
 
 exports.displayTypes = {
     'aerial_recreational_areas': 'Aerial Recreational Areas',
@@ -84,3 +84,58 @@ exports.displayProperties = {
     date_expire: 'End',
     size: 'Size'
 }
+
+exports.supportedLabelLocaleCodes = [
+    'en',
+    'es',
+    'de',
+    'fr',
+    'ru',
+    'zh'
+]
+
+exports.labelLayers = [
+    'airport-label',
+    'country-label-lg',
+    'country-label-md',
+    'country-label-sm',
+    'housenum-label',
+    'marine-label-lg-ln',
+    'marine-label-lg-pt',
+    'marine-label-md-ln',
+    'marine-label-md-pt',
+    'marine-label-sm-ln',
+    'marine-label-sm-pt',
+    'place-city-lg-n',
+    'place-city-lg-s',
+    'place-city-md-n',
+    'place-city-md-s',
+    'place-city-sm',
+    'place-hamlet',
+    'place-island',
+    'place-islet-archipelago-aboriginal',
+    'place-neighbourhood',
+    'place-residential',
+    'place-suburb',
+    'place-town',
+    'place-village',
+    'poi-parks_scalerank',
+    'poi-parks-scalerank1',
+    'poi-parks-scalerank2',
+    'poi-parks-scalerank3',
+    'poi-scalerank1',
+    'poi-scalerank2',
+    'poi-scalerank3',
+    'poi-scalerank4-l1',
+    'poi-scalerank4-l15',
+    'rail-label',
+    'road-label-large',
+    'road-label-medium',
+    'road-label-small',
+    'state-label-lg',
+    'state-label-md',
+    'state-label-sm',
+    'water-label',
+    'water-label-sm',
+    'waterway-label'
+]

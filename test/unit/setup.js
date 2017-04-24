@@ -40,6 +40,7 @@ const defaultOptions = {
     bearing: 0,
     hash: false,
     interactive: true,
+    language: 'en',
     showControls: true,
     showPopups: true,
     showSearch: false,
