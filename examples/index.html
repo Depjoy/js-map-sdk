@@ -5,6 +5,8 @@
     <title>AirMap | Maps SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <script src="bundle.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
 
     <style>
         body {
@@ -22,7 +24,7 @@
 
 <body>
     <div id="map" style="z-index: -1"></div>
-
+    <script src='../src/controls/controls.js'></script>
     <script>
         var AIRMAP_API_KEY = localStorage.getItem('AIRMAP_API_KEY');
         var MAPBOX_ACCESS_TOKEN = localStorage.getItem('MAPBOX_ACCESS_TOKEN');
@@ -38,8 +40,8 @@
                 theme: 'light',
                 createFlights: false,
                 showSearch: true,
-                showPopups: true,
                 useLocation: true,
+                showControls: false,
                 layers: [ 'airports_recreational', 'class_b', 'national_parks', 'tfrs', 'wildfires', 'universities' ]
             });
             map.on('click', function(e) {
@@ -48,6 +50,7 @@
             map.on('airspace.click', function(e) {
                 console.log('airspace.click', e);
             });
+            map.addControl(new Controls());
         } else {
             console.error(
                 'Missing AIRMAP_API_KEY or MAPBOX_ACCESS_TOKEN. ' +
