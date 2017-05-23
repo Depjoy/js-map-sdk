@@ -13,6 +13,7 @@ const buttons = [
     '+', '-', '^', 'o'
 ]
 
+const mapboxgl = require('mapbox-gl')
 const { NavigationControl, GeolocateControl } = mapboxgl;
 
 
@@ -71,7 +72,7 @@ class CustomGeolocateControl extends GeolocateControl {
     getDiv(map) {
         this._map = map;
         this._container = document.createElement('div')
-        this._container.setAttribute('class', 'custom-geolocate-controls')
+        this._container.setAttribute('class', 'mapboxgl-control custom-geolocate-controls')
         checkGeolocationSupport(this._setupUI)
         return this._container;
     }
@@ -84,33 +85,35 @@ class Controls {
         this._map = null
         this._theme = map.opts.theme ? map.opts.theme : 'light'
         this._themeIdx = themes.indexOf(this._theme)
-        console.log(map)
     }
 
     onAdd(map) {
         this._map = map
-        const navigation = new CustomNavigationControl().getDiv(this._map);
-        const geolocate = new CustomGeolocateControl().getDiv(this._map);
 
         this._container = document.createElement('div')
         this._container.setAttribute('class', 'mapboxgl-ctrl mapboxgl-ctrl-group')
 
-        this._container.append(navigation);
-        this._container.append(geolocate);
+        const navigationDiv = new CustomNavigationControl().getDiv(this._map);
+        const geolocateDiv = new CustomGeolocateControl().getDiv(this._map);
 
         // create theme switcher button
-        this._button = document.createElement('button')
-        this._button.setAttribute('class', 'mapboxgl-ctrl')
-        this._button.addEventListener('click', () => {
-            const newIdx = this._themeIdx++ % 4
-            this._theme = themes[newIdx]
+        const themesButton = document.createElement('button')
+        themesButton.setAttribute('class', 'mapboxgl-ctrl')
+        
+        themesButton.addEventListener('click', () => {
+            this._themeIdx = ++this._themeIdx % 4
+            this._theme = themes[this._themeIdx]
+
             map.fire('themeSwitch.click', {
                 type: 'themeSwitch',
                 theme: this._theme
             })
         })
 
-        this._container.append(this._button)
+        this._container.append(navigationDiv);
+        this._container.append(geolocateDiv);
+
+        this._container.append(themesButton)
 
         return this._container;
     }
@@ -120,3 +123,5 @@ class Controls {
         this._map = undefined;
     }
 }
+
+module.exports = Controls;
