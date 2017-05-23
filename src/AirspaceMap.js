@@ -13,6 +13,7 @@ const { BadConfigError, BadOptionError } = require('./error')
 const templates = {
     popup: _.template(fs.readFileSync(__dirname + '/templates/popup.html', 'utf8'), { 'imports': { 'constants': constants } })
 }
+const controls = require('./controls')
 
 
 /**

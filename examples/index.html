@@ -24,7 +24,6 @@
 
 <body>
     <div id="map" style="z-index: -1"></div>
-    <script src='../src/controls/controls.js'></script>
     <script>
         var AIRMAP_API_KEY = localStorage.getItem('AIRMAP_API_KEY');
         var MAPBOX_ACCESS_TOKEN = localStorage.getItem('MAPBOX_ACCESS_TOKEN');
@@ -50,7 +49,7 @@
             map.on('airspace.click', function(e) {
                 console.log('airspace.click', e);
             });
-            map.addControl(new Controls());
+            map.addControl(new Airmap.Controls());
         } else {
             console.error(
                 'Missing AIRMAP_API_KEY or MAPBOX_ACCESS_TOKEN. ' +

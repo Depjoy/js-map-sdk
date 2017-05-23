@@ -9,13 +9,11 @@ const themes = [
     'satellite'
 ]
 
-const buttons = [
-    '+', '-', '^', 'o'
-]
-
-const mapboxgl = require('mapbox-gl')
-const { NavigationControl, GeolocateControl } = mapboxgl;
-
+const { NavigationControl, GeolocateControl } = require('mapbox-gl')
+const fs = require('fs')
+const insertCss = require('insert-css')
+const className = 'mapboxgl-ctrl'
+const customClassName = 'js-plugin-ctrl'
 
 // create custom class to return navigation controls with custom styling
 class CustomNavigationControl extends NavigationControl {
@@ -23,15 +21,28 @@ class CustomNavigationControl extends NavigationControl {
     getDiv(map) {
         this._map = map;
         this._container = document.createElement('div');
-        this._container.setAttribute('class', 'custom-nav-controls')
+        this._container.setAttribute('class', `${customClassName} ${customClassName}-group custom-nav-controls`)
         this._container.addEventListener('contextmenu', this._onContextMenu.bind(this));
 
-        this._zoomInButton = this._createButton('zoom-in', 'Zoom In', map.zoomIn.bind(map));
-        this._zoomOutButton = this._createButton('zoom-out', 'Zoom Out', map.zoomOut.bind(map));
-        this._compass = this._createButton('compass', 'Reset North', map.resetNorth.bind(map));
+        // zoom in button
+        this._zoomInButton = this._createButton(`${customClassName}`, 'Zoom In', map.zoomIn.bind(map));
+        this._zoomInPlusSign = document.createElement('span')
+        this._zoomInPlusSign.setAttribute('class', `${customClassName}-icon ${customClassName}-zoom-in`)
+        this._zoomInButton.append(this._zoomInPlusSign)
 
-        this._compassArrow = document.createElement('span', 'compass-arrow', this._compass);
+        // zoom out button
+        this._zoomOutButton = this._createButton(`${customClassName}`, 'Zoom Out', map.zoomOut.bind(map));
+        this._zoomOutMinusSign = document.createElement('span')
+        this._zoomOutMinusSign.setAttribute('class', `${customClassName}-icon ${customClassName}-zoom-out`)
+        this._zoomOutButton.append(this._zoomOutMinusSign)
 
+        // compass button
+        this._compass = this._createButton(`${className}-icon ${className}-compass`, 'Reset North', map.resetNorth.bind(map));
+        this._compassArrow = document.createElement('span')
+        this._compassArrow.setAttribute('class', `${className}-compass-arrow`)
+        this._compass.append(this._compassArrow)
+
+        // add compass event listeners
         this._compass.addEventListener('mousedown', this._onCompassDown.bind(this));
         this._onCompassMove = this._onCompassMove.bind(this);
         this._onCompassUp = this._onCompassUp.bind(this);
@@ -67,12 +78,12 @@ function checkGeolocationSupport(callback) {
 }
 
 // create custom class to return geolocation controls with custom styling
-class CustomGeolocateControl extends GeolocateControl {
+class CustomGeolocateControl extends GeolocateControl { 
 
     getDiv(map) {
         this._map = map;
         this._container = document.createElement('div')
-        this._container.setAttribute('class', 'mapboxgl-control custom-geolocate-controls')
+        this._container.setAttribute('class', `${customClassName} ${customClassName}-group custom-geolocate-controls`)
         checkGeolocationSupport(this._setupUI)
         return this._container;
     }
@@ -82,6 +93,9 @@ class CustomGeolocateControl extends GeolocateControl {
 class Controls {
 
     constructor() {
+        // load styles
+        insertCss(fs.readFileSync(__dirname + '/constants/styles.css', 'utf8'))
+
         this._map = null
         this._theme = map.opts.theme ? map.opts.theme : 'light'
         this._themeIdx = themes.indexOf(this._theme)
@@ -98,7 +112,10 @@ class Controls {
 
         // create theme switcher button
         const themesButton = document.createElement('button')
-        themesButton.setAttribute('class', 'mapboxgl-ctrl')
+        themesButton.setAttribute('class', `${customClassName}`)
+        const themesLogo = document.createElement('span')
+        themesLogo.setAttribute('class', `${customClassName}-icon ${customClassName}-themes`)
+        themesButton.append(themesLogo)
         
         themesButton.addEventListener('click', () => {
             this._themeIdx = ++this._themeIdx % 4
@@ -110,12 +127,11 @@ class Controls {
             })
         })
 
-        this._container.append(navigationDiv);
-        this._container.append(geolocateDiv);
-
+        this._container.append(navigationDiv)
+        this._container.append(geolocateDiv)
         this._container.append(themesButton)
 
-        return this._container;
+        return this._container
     }
 
     onRemove() {
