@@ -91,10 +91,10 @@ class CustomGeolocateControl extends GeolocateControl {
 
 class Controls {
 
-    constructor() {
+    constructor(theme = 'standard') {
 
         this._map = null
-        this._theme = 'light'
+        this._theme = theme
         this._themeIdx = themes.indexOf(this._theme)
     }
 
@@ -109,7 +109,7 @@ class Controls {
 
         // create theme switcher button
         const themesButton = document.createElement('button')
-        themesButton.setAttribute('class', `${customClassName}`)
+        themesButton.setAttribute('class', `${customClassName} custom-theme-control`)
         const themesLogo = document.createElement('span')
         themesLogo.setAttribute('class', `${customClassName}-icon ${customClassName}-themes`)
         themesButton.append(themesLogo)
