@@ -10,8 +10,7 @@ const themes = [
 ]
 
 const { NavigationControl, GeolocateControl } = require('mapbox-gl')
-const fs = require('fs')
-const insertCss = require('insert-css')
+
 const className = 'mapboxgl-ctrl'
 const customClassName = 'js-plugin-ctrl'
 
@@ -93,11 +92,9 @@ class CustomGeolocateControl extends GeolocateControl {
 class Controls {
 
     constructor() {
-        // load styles
-        insertCss(fs.readFileSync(__dirname + '/constants/styles.css', 'utf8'))
 
         this._map = null
-        this._theme = map.opts.theme ? map.opts.theme : 'light'
+        this._theme = 'light'
         this._themeIdx = themes.indexOf(this._theme)
     }
 
