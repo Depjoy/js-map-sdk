@@ -71,7 +71,7 @@ class AirspaceMap {
         if (this.opts.showSearch) loadCSS(constants.mapboxGeocoderStyles)
 
         // Set up event emitter
-        this._eventTypes = ['airspace.click', 'themeSwitch.click']
+        this._eventTypes = ['airspace.click']
         this._ev = new EventEmitter()
         this.fire = (type, data) => this._ev.emit(type, data)
 
@@ -303,7 +303,6 @@ class AirspaceMap {
      * @private
      */
     _sdkHandleClick(data) {
-        console.log('clicked')
         const map = data.target
         const properties = map.queryRenderedFeatures(data.point)
             .map(feat => feat.properties)

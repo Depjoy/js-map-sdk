@@ -36,7 +36,7 @@
                 container: 'map',
                 center: [33.9416, -118.4085],
                 zoom: 12,
-                theme: 'light',
+                theme: 'dark',
                 createFlights: false,
                 showSearch: true,
                 useLocation: true,
@@ -49,7 +49,7 @@
             map.on('airspace.click', function(e) {
                 console.log('airspace.click', e);
             });
-            map.addControl(new Airmap.Controls());
+            map.addControl(new Airmap.Controls(map.opts.theme));
         } else {
             console.error(
                 'Missing AIRMAP_API_KEY or MAPBOX_ACCESS_TOKEN. ' +
