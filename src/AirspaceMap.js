@@ -170,14 +170,7 @@ class AirspaceMap {
         })
 
         this.map.on('click', this._sdkHandleClick.bind(this))
-
-        this.map.on('themeSwitch.click', this._changeThemes.bind(this))
     }
-
-    _changeThemes(data) {
-        this.theme(data.theme)
-    }
-
     /**
      * Use geolocation API to automatically center on a user's location.
      * @private
