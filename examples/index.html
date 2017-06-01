@@ -50,6 +50,9 @@
                 console.log('airspace.click', e);
             });
             map.addControl(new Airmap.Controls(map.opts.theme));
+            map.on('themeSwitch.click', function(e) {
+                console.log('themeSwitch.click')
+            })
         } else {
             console.error(
                 'Missing AIRMAP_API_KEY or MAPBOX_ACCESS_TOKEN. ' +
