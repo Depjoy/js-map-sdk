@@ -8,13 +8,14 @@ const mapboxgl = require('mapbox-gl')
 const request = require('superagent')
 const uuid = require('uuid')
 const constants = require('./constants')
+const getLocaleStrings = require('./translations')
 const utils = require('./utils')
 const { BadConfigError, BadOptionError } = require('./error')
 const templates = {
     popup: _.template(fs.readFileSync(__dirname + '/templates/popup.html', 'utf8'), { 'imports': { 'constants': constants } })
 }
 const controls = require('./controls')
-
+const popupHtml = fs.readFileSync(__dirname + '/templates/popup.html', 'utf8')
 
 /**
  * Class that wraps Mapbox GL and allows for working with airspace layers.
@@ -36,6 +37,7 @@ class AirspaceMap {
      * @param {number} [opts.pitch=0] - Map pitch on load.
      * @param {number} [opts.bearing=0] - Map bearing on load.
      * @param {boolean} [opts.interactive=true] - Specifies whether users can click on and manipulate the map.
+     * @param {string} [opts.language='en'] - Languages: 'en' (English) or 'ja' (Japanese). If another language is provided, the SDK will attempt to set the language, otherwise it will default to English or the local language.
      * @param {boolean} [opts.showControls=true] - Show controls for zoom and bearing.
      * @param {boolean} [opts.showPopups=true] - Show a popup with airspace information when a user clicks on the map.
      * @param {boolean} [opts.showSearch=false] - Render a search bar that allows users to query for a specific location.
@@ -165,6 +167,7 @@ class AirspaceMap {
     _bindEvents() {
         this.map.on('style.load', () => {
             this.setLayers(this.layers) // only show layers requested by the user
+            this.setLanguage(this.opts.language)
             this._addWatermark()
             if (this.opts.useLocation) this._geolocateUser()
         })
@@ -339,11 +342,15 @@ class AirspaceMap {
      * @private
      */
     _buildPopupMarkup(layers, lngLat) {
+        const localeStrings = getLocaleStrings(this.opts.language)
+        const templates = {
+            popup: _.template(popupHtml, { 'imports': { 'localeStrings': localeStrings } })
+        }
         let html = ''
         const groupsByType = utils.formatPopupData(layers)
         for (var g in groupsByType) {
             var group = groupsByType[g]
-            if (typeof constants.displayTypes[g] !== 'undefined') {
+            if (typeof localeStrings[g] !== 'undefined') {
                 const items = group.map(i => _.pick(i, ['url', 'name', 'icao', 'phone', 'size', 'date_effective', 'date_expire']))
                 html += templates.popup({ group: g, items: items })
             }
@@ -758,6 +765,34 @@ class AirspaceMap {
         }
     }
 
+    /**
+     * Translates popups and labels on the map. If locale is not currently supported
+     * for popups, popups will default to English. If locale is not currently
+     * supported by Mapbox as an available language for labels, labels will default
+     * to the local name and language.
+     * Labels without translations will show an English or international version of
+     * the name if possible, otherwise they will show the local name.
+     * Popup Available Languages: en (English), es (Spanish), ja (Japanese)
+     * Map Label Available Languages: en (English), es (Spanish), de (German), fr (French),
+     * ru (Russian), zh (Chinese - contains Mandarin using simplified Chinese characters)
+     * @param {string} [locale] - Locale code.
+     * @returns {AirspaceMap} - `this`
+     * @private
+     */
+    setLanguage(locale = null) {
+        let language
+        if (locale && constants.supportedLabelLocaleCodes.indexOf(locale) > -1) {
+            language = `{name_${locale}}`
+        } else {
+            language = '{name}'
+        }
+        constants.labelLayers.forEach(label => {
+            if (this.map.getLayer(label)) this.map.setLayoutProperty(label, 'text-field', language)
+        })
+        this.opts.language = locale || 'en'
+        return this
+    }
+
 }
 
 AirspaceMap.defaults = {
@@ -770,6 +805,7 @@ AirspaceMap.defaults = {
     bearing: 0,
     hash: false,
     interactive: true,
+    language: 'en',
     showControls: true,
     showPopups: true,
     showSearch: false,

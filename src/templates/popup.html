@@ -1,6 +1,6 @@
 <div class="airspace-group">
     <div class="airspace-group--title">
-        <%= constants.displayTypes[group] %>
+        <%= localeStrings[group] %>
     </div>
 
     <% _.forEach(items, function(item) { %>
@@ -15,10 +15,10 @@
                                 <%= item[key] %>
                             <% } %>
                         <% } else if (key === 'phone') { %>
-                            <strong><%= constants.displayProperties[key] %>: </strong>
+                            <strong><%= localeStrings[key] %>: </strong>                            
                             <a href="tel://<%= item[key] %>" target="_blank"><%= item[key] %></a>
                         <% } else { %>
-                            <strong><%= constants.displayProperties[key] %>: </strong>
+                            <strong><%= localeStrings[key] %>: </strong>                            
                             <%= item[key] %>
                         <% } %>
                     </div>
