@@ -1,20 +1,13 @@
 /*
- *  AirMap Mapbox-GL-JS Controls Plugin
- */
-
-const themes = [
-    'standard',
-    'dark',
-    'light',
-    'satellite'
-]
+ * AirMap Mapbox-GL-JS Controls Plugin
+*/
 
 const { NavigationControl, GeolocateControl } = require('mapbox-gl')
 
 const className = 'mapboxgl-ctrl'
 const customClassName = 'js-plugin-ctrl'
 
-// create custom class to return navigation controls with custom styling
+// creates custom navigation class to return navigation controls with custom styling
 class CustomNavigationControl extends NavigationControl {
 
     getDiv(map) {
@@ -53,7 +46,7 @@ class CustomNavigationControl extends NavigationControl {
     }
 }
 
-// helper function to check if browser supports geolocation
+// native mapboxgl helper function to check if browser supports geolocation
 let supportsGeolocation;
 
 function checkGeolocationSupport(callback) {
@@ -76,7 +69,7 @@ function checkGeolocationSupport(callback) {
     }
 }
 
-// create custom class to return geolocation controls with custom styling
+// creates custom class to return geolocation controls with custom styling
 class CustomGeolocateControl extends GeolocateControl { 
 
     getDiv(map) {
@@ -89,21 +82,45 @@ class CustomGeolocateControl extends GeolocateControl {
 }
 
 
+/**
+ * Creates a new custom controls instance. 
+ * @param {String} [theme='standard'] Optional parameter that must defaults to 'standard'
+*/
+
 class Controls {
 
     constructor(theme = 'standard') {
-
         this._map = null
         this._theme = theme
-        this._themeIdx = themes.indexOf(this._theme)
+        this._container = null
     }
 
+    /**
+    * Adds the custom controls to the map. This is called by `map.addControl`,
+    */
     onAdd(map) {
         this._map = map
 
         this._container = document.createElement('div')
         this._container.setAttribute('class', 'mapboxgl-ctrl mapboxgl-ctrl-group')
 
+        this.setup()
+        return this._container
+    }
+
+    /**
+     * Removes the control from the map it has been added to. This is called by `map.removeControl`,
+     * which is the recommended method to remove controls.
+     *
+     * @returns {Controls} - `this`
+    */
+    onRemove(map) {
+        this._container.parentNode.removeChild(this._container);
+        this._map = undefined;
+        return this
+    }
+
+    setup() {
         const navigationDiv = new CustomNavigationControl().getDiv(this._map);
         const geolocateDiv = new CustomGeolocateControl().getDiv(this._map);
 
@@ -114,26 +131,18 @@ class Controls {
         themesLogo.setAttribute('class', `${customClassName}-icon ${customClassName}-themes`)
         themesButton.append(themesLogo)
         
+        // adds an event listener that emits a themeSwitch.click event when the themes button is pressed
         themesButton.addEventListener('click', () => {
-            this._themeIdx = ++this._themeIdx % 4
-            this._theme = themes[this._themeIdx]
-
-            map.fire('themeSwitch.click', {
+            this._map.fire('themeSwitch.click', {
                 type: 'themeSwitch',
                 theme: this._theme
             })
         })
 
+        // appends controls to the container
         this._container.append(navigationDiv)
         this._container.append(geolocateDiv)
         this._container.append(themesButton)
-
-        return this._container
-    }
-
-    onRemove() {
-        this._container.parentNode.removeChild(this._container);
-        this._map = undefined;
     }
 }
 

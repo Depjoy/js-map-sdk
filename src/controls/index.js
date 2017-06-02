@@ -1,13 +1,12 @@
 /**
- * Mapbox GL JS plugin to view and interact with AirMap's Airspace Rules.
- * @class Airmap.Rules
+ * Mapbox GL JS plugin to replace Mapbox GL's default navigation and geolocation controls with a custom controls set that enables theme switching.
+ * @class Airmap.Controls
  *
- * @param {Object} options
- * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
+ * @param {String} [theme='standard'] Optional parameter that must defaults to 'standard'
  * @example
- * const map = new Airmap.Rules()
+ * const map = new Airmap.Controls('light')
  * map.addControl(map)
- * @return {Rules} `this`
+ * @return {Controls} `this`
  */
 const Controls = require('./controls')
 

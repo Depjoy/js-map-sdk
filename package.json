@@ -54,7 +54,6 @@
     "browserify": "^13.0.0",
     "budo": "^8.0.4",
     "chai": "^3.5.0",
-    "insert-css": "^2.0.0",
     "jsdoc": "^3.4.3",
     "jsdoc-to-markdown": "^2.0.1",
     "jsdom": "^9.8.3",
