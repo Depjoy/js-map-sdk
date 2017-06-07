@@ -18,7 +18,7 @@
     "build:compile": "browserify src/index.js -s Airmap.Map > dist/airmap.map.js",
     "build:minify": "uglifyjs dist/airmap.map.js -m -c > dist/airmap.map.min.js",
     "docs": "jsdoc2md src/** > API.md",
-    "prepublish": "rm -rf dist && mkdir dist && babel --out-dir dist src && npm run build && cp src/styles.css dist && cp -r src/templates dist",
+    "prepublish": "rm -rf dist && mkdir dist && babel --out-dir dist src --copy-files && npm run build",
     "release": "npm install && npm test && npm run build && sh ./scripts/prepare.sh && sh ./scripts/deploy.sh",
     "release:next": "npm install && npm test && npm run build && sh ./scripts/deploy-next.sh",
     "standard-version": "standard-version",
