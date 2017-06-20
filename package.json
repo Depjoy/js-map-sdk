@@ -1,6 +1,6 @@
 {
   "name": "airmap-map-sdk",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "A wrapper for Mapbox GL JS & the AirMap Tile Service",
   "author": "AirMap, Inc. <developers@airmap.com> (https://airmap.com)",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -18,7 +18,7 @@
     "build:compile": "browserify src/index.js -s Airmap.Map > dist/airmap.map.js",
     "build:minify": "uglifyjs dist/airmap.map.js -m -c > dist/airmap.map.min.js",
     "docs": "jsdoc2md src/** > API.md",
-    "prepublish": "rm -rf dist && mkdir dist && babel --out-dir dist src && npm run build && cp src/styles.css dist && cp -r src/templates dist",
+    "prepublish": "rm -rf dist && mkdir dist && babel --out-dir dist src --copy-files && npm run build",
     "release": "npm install && npm test && npm run build && sh ./scripts/prepare.sh && sh ./scripts/deploy.sh",
     "release:next": "npm install && npm test && npm run build && sh ./scripts/deploy-next.sh",
     "standard-version": "standard-version",
@@ -38,7 +38,7 @@
     "insert-css": "^2.0.0",
     "load-script": "^1.0.0",
     "lodash": "^4.5.1",
-    "mapbox-gl": "~0.33.1",
+    "mapbox-gl": "~0.35.0",
     "moment": "^2.12.0",
     "superagent": "^1.8.3",
     "uuid": "^2.0.1"

@@ -55,6 +55,7 @@ Configure map, set options, and load stylesheets.
 | [opts.pitch] | <code>number</code> | <code>0</code> | Map pitch on load. |
 | [opts.bearing] | <code>number</code> | <code>0</code> | Map bearing on load. |
 | [opts.interactive] | <code>boolean</code> | <code>true</code> | Specifies whether users can click on and manipulate the map. |
+| [opts.language] | <code>string</code> | <code>&quot;&#x27;en&#x27;&quot;</code> | Languages: 'en' (English) or 'ja' (Japanese). If another language is provided, the SDK will attempt to set the language, otherwise it will default to English or the local language. |
 | [opts.showControls] | <code>boolean</code> | <code>true</code> | Show controls for zoom and bearing. |
 | [opts.showPopups] | <code>boolean</code> | <code>true</code> | Show a popup with airspace information when a user clicks on the map. |
 | [opts.showSearch] | <code>boolean</code> | <code>false</code> | Render a search bar that allows users to query for a specific location. |
