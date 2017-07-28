@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/airmap/js-map-sdk/compare/v2.1.1...v2.3.0) (2017-07-28)
+
+
+### Bug Fixes
+
+* Fix issue with installing dev dependencies. ([4db485f](https://github.com/airmap/js-map-sdk/commit/4db485f))
+
+
+### Features
+
+* Upgrade Mapbox to 0.35.0 ([acc8d99](https://github.com/airmap/js-map-sdk/commit/acc8d99))
+
+
+
 <a name="2.2.0"></a>
 # [2.2.0](https://github.com/airmap/js-map-sdk/compare/v2.1.1...v2.2.0) (2017-06-20)
 
