@@ -48,7 +48,11 @@ const defaultOptions = {
     createFlights: false,
     tileServiceUrl: 'https://api.airmap.com/maps/v4/tilejson',
     webAppUrl: 'https://app.airmap.io',
-    suppressWarnings: false
+    suppressWarnings: false,
+    logoUrl: {
+        dark: "https://cdn.airmap.io/img/airmap-powered-logo.png",
+        light: "https://cdn.airmap.io/img/airmap-powered-logo-white.png"
+    }
 }
 
 before(() => {

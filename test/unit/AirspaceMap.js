@@ -1,16 +1,18 @@
-const { expect, mockery, sinon, configMock, defaultOptions } = require('test/unit/setup')
+const { expect, sinon, configMock, defaultOptions } = require('test/unit/setup')
 
 
 let AirspaceMap, _requestTiles, _supported, events, EventEmitter, _evOn, _evRemoveListener, mapboxglMock
 
 before(() => {
     AirspaceMap = require('src/AirspaceMap')
+    events = require('events')
+    mapboxglMock = require('mapbox-gl-js-mock')
+
     _requestTiles = sinon.stub(AirspaceMap.prototype, '_requestTiles', () => true)
     _supported = sinon.stub(AirspaceMap.prototype, '_supported', () => true)
-    events = require('events')
     _evOn = sinon.stub(events.EventEmitter.prototype, 'on', (type, listener) => null)
     _evRemoveListener = sinon.stub(events.EventEmitter.prototype, 'removeListener', (type, listener) => null)
-    mapboxglMock = require('mapbox-gl-js-mock')
+
     // additional methods not yet added to mapbox-gl-js-mock
     mapboxglMock.Map.prototype.fitBounds = () => null
     mapboxglMock.Map.prototype.flyTo = () => null
@@ -49,7 +51,11 @@ describe('AirspaceMap#constructor', () => {
         const actual = new AirspaceMap(configMock, {
             container: 'map',
             theme: 'dark',
-            zoom: 12
+            zoom: 12,
+            logoUrl: {
+                dark: "https://cdn.airmap.io/img/airmap-powered-logo.png",
+                light: "https://cdn.airmap.io/img/airmap-powered-logo-white.png"
+            }
         })
         expect(actual.options).to.deep.equal(expected)
     })
