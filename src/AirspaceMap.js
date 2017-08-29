@@ -48,7 +48,7 @@ class AirspaceMap {
         }
 
         // Class wide settings
-        this.opts = {...this.defaults, ...opts }
+        this.opts = _.merge({}, this.defaults, opts)
         this.apiKey = _.get(config, 'airmap.api_key', null)
         this.accessToken = _.get(config, 'mapbox.access_token', null)
         this.map = null
@@ -203,7 +203,7 @@ class AirspaceMap {
 
     /** @private */
     _watermarkSrc() {
-        return this.activeTheme === 'dark' || this.activeTheme === 'satellite' ? constants.poweredByLogoWhite : constants.poweredByLogo
+        return this.activeTheme === 'dark' || this.activeTheme === 'satellite' ? this.opts.logoUrl.light : this.opts.logoUrl.dark
     }
 
     /** @private */
@@ -810,7 +810,11 @@ AirspaceMap.defaults = {
     createFlights: false,
     tileServiceUrl: 'https://api.airmap.com/maps/v4/tilejson',
     webAppUrl: 'https://app.airmap.io',
-    suppressWarnings: false
+    suppressWarnings: false,
+    logoUrl: {
+        light: constants.poweredByLogoWhite,
+        dark: constants.poweredByLogo
+    }
 }
 
 
