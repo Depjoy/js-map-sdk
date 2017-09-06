@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const { merge, get, includes, template, pick, remove } = require('lodash')
 const EventEmitter = require('events').EventEmitter
 const fs = require('fs')
 const insertCss = require('insert-css')
@@ -40,6 +40,7 @@ class AirspaceMap {
      * @param {boolean} [opts.useLocation=true] - Attempt to center the map on a user location.
      * @param {boolean} [opts.createFlights=false] - Insert button in popups that allows users to create a flight using DNAS Basic Integration.
      * @param {boolean} [opts.suppressWarnings=false] - Suppress developer warnings.
+     * @param {object} [opts.logoUrl=logoUrl: {light: ..., dark: ...}] - default logo for darks and light themes.
      */
     constructor(config = {}, opts) {
         if (!this._supported()) {
@@ -48,9 +49,9 @@ class AirspaceMap {
         }
 
         // Class wide settings
-        this.opts = _.merge({}, this.defaults, opts)
-        this.apiKey = _.get(config, 'airmap.api_key', null)
-        this.accessToken = _.get(config, 'mapbox.access_token', null)
+        this.opts = merge({}, this.defaults, opts)
+        this.apiKey = get(config, 'airmap.api_key', null)
+        this.accessToken = get(config, 'mapbox.access_token', null)
         this.map = null
         this.layers = utils.addRequiredLayers(this.opts.layers)
         this.activeTheme = this.opts.theme
@@ -134,13 +135,10 @@ class AirspaceMap {
      * @private
      */
     _requestTiles(cb) {
-        request.get(`${this.opts.tileServiceUrl}/${constants.staticLayers.join(',')}`)
-            .set('X-API-Key', this.apiKey)
-            .query({
-                token: this.apiKey,
-                theme: this.activeTheme
-            })
-            .end((err, res) => cb(err, res))
+        request.get(`${this.opts.tileServiceUrl}/${constants.staticLayers.join(',')}`).set('X-API-Key', this.apiKey).query({
+            token: this.apiKey,
+            theme: this.activeTheme
+        }).end((err, res) => cb(err, res))
     }
 
     /**
@@ -251,8 +249,8 @@ class AirspaceMap {
             const now = Date.now()
             this.map.setFilter('active-tfrs', [
                 'any',
-                [ 'all', ['<=', 'date_effective', now], ['>=', 'date_expire', now] ],
-                [ 'all', ['<=', 'date_effective', now], ['!has', 'date_expire'] ]
+                ['all', ['<=', 'date_effective', now], ['>=', 'date_expire', now]],
+                ['all', ['<=', 'date_effective', now], ['!has', 'date_expire']]
             ])
             this.map.setFilter('future-tfrs', ['>=', 'date_effective', now])
         }, interval)
@@ -297,15 +295,13 @@ class AirspaceMap {
      */
     _sdkHandleClick(data) {
         const map = data.target
-        const properties = map.queryRenderedFeatures(data.point)
-            .map(feat => feat.properties)
-            .filter(p => {
-                // filter to airspace features
-                return (
-                    p.type &&
-                    (_.includes(constants.staticLayers, p.type.replace('layer_', '')) || p.type == 'tfrs')
-                )
-            })
+        const properties = map.queryRenderedFeatures(data.point).map(feat => feat.properties).filter(p => {
+            // filter to airspace features
+            return (
+                p.type &&
+                (includes(constants.staticLayers, p.type.replace('layer_', '')) || p.type == 'tfrs')
+            )
+        })
 
         if (properties.length) {
             // fire click event with filtered airspace data
@@ -325,9 +321,7 @@ class AirspaceMap {
                 markupElement.innerHTML = markup
                 popups[0].insertBefore(markupElement, popups[0].firstChild)
             } else {
-                let tooltip = new mapboxgl.Popup({ closeOnClick: true })
-                    .setLngLat(data.lngLat)
-                    .setHTML(markup)
+                let tooltip = new mapboxgl.Popup({ closeOnClick: true }).setLngLat(data.lngLat).setHTML(markup)
                 tooltip.addTo(map)
             }
         }
@@ -341,14 +335,14 @@ class AirspaceMap {
     _buildPopupMarkup(layers, lngLat) {
         const localeStrings = getLocaleStrings(this.opts.language)
         const templates = {
-            popup: _.template(popupHtml, { 'imports': { 'localeStrings': localeStrings } })
+            popup: template(popupHtml, { 'imports': { 'localeStrings': localeStrings } })
         }
         let html = ''
         const groupsByType = utils.formatPopupData(layers)
         for (var g in groupsByType) {
             var group = groupsByType[g]
             if (typeof localeStrings[g] !== 'undefined') {
-                const items = group.map(i => _.pick(i, ['url', 'name', 'icao', 'phone', 'size', 'date_effective', 'date_expire']))
+                const items = group.map(i => pick(i, ['url', 'name', 'icao', 'phone', 'size', 'date_effective', 'date_expire']))
                 html += templates.popup({ group: g, items: items })
             }
         }
@@ -439,9 +433,9 @@ class AirspaceMap {
         // remove this layer's marker if it has one
         if (utils.hasMarker(layer)) {
             this.map.setLayoutProperty(`${layer}-marker`, 'visibility', 'none')
-            _.remove(this.layers, l => l === `${layer}-marker`)
+            remove(this.layers, l => l === `${layer}-marker`)
         }
-        _.remove(this.layers, l => l === layer)
+        remove(this.layers, l => l === layer)
         return this
     }
 
@@ -607,10 +601,10 @@ class AirspaceMap {
      * @param {Object} control - The {@link https://www.mapbox.com/mapbox-gl-js/api/#Control|Control} to remove.
      * @returns {AirspaceMap} - `this`
      */
-     removeControl(control) {
+    removeControl(control) {
         this.map.removeControl(control)
         return this
-     }
+    }
 
     /**
      * Returns the theme that is currently active.
@@ -652,9 +646,9 @@ class AirspaceMap {
      * @public
      * @returns {HTMLElement} - The map's container.
      */
-     getContainer() {
+    getContainer() {
         return this.map.getContainer()
-     }
+    }
 
     /**
      * Drops a marker at the provided location.
@@ -689,7 +683,7 @@ class AirspaceMap {
      * @returns {AirspaceMap} - `this`
      */
     removeMarker(id) {
-        _.remove(this.markers, m => m.properties.id === id)
+        remove(this.markers, m => m.properties.id === id)
         this._renderMarkers()
         return this
     }
@@ -722,8 +716,8 @@ class AirspaceMap {
     get mapboxgl() {
         if (window.console && window.console.warn && !this.opts.suppressWarnings) {
             console.warn('AirMap: Methods you call using the mapboxgl getter are subject to change based on minor ' +
-                         'version updates in Mapbox GL JS. If you need to use this feature, it is recommended that ' +
-                         'you lock your SDK to a specific version.')
+                'version updates in Mapbox GL JS. If you need to use this feature, it is recommended that ' +
+                'you lock your SDK to a specific version.')
         }
         return this.map
     }
