@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.4.0"></a>
+# [2.4.0](https://github.com/airmap/js-map-sdk/compare/v2.3.0...v2.4.0) (2017-11-27)
+
+
+### Features
+
+* **PLAT-1248:** Bumps mapbox-gl version to 0.38.0 to fix issue with Safari map labels not appearing ([ae215d4](https://github.com/airmap/js-map-sdk/commit/ae215d4))
+
+
+
 <a name="2.3.0"></a>
 # [2.3.0](https://github.com/airmap/js-map-sdk/compare/v2.1.1...v2.3.0) (2017-07-28)
 
